@@ -1,4 +1,6 @@
+import {API_FOOTBALL_KEY} from '@env';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+
 import {NavigationContainer} from '@react-navigation/native';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
@@ -10,7 +12,7 @@ import {
   View,
 } from 'react-native';
 
-const API_KEY = '9f782b35d1a9d409e638940c8271007b'; // Replace with your API key
+const API_KEY = API_FOOTBALL_KEY; // Replace with your API key
 
 // Helper function to get tomorrow's date in YYYY-MM-DD format
 const getTomorrowDate = () => {
