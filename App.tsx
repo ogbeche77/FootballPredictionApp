@@ -1,20 +1,13 @@
 import {API_FOOTBALL_KEY} from '@env';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-
 import {NavigationContainer} from '@react-navigation/native';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+import styles from './AppStyles';
 
-const API_KEY = API_FOOTBALL_KEY; // Replace with your API key
+const API_KEY = API_FOOTBALL_KEY;
 
-// Helper function to get tomorrow's date in YYYY-MM-DD format
 const getTomorrowDate = () => {
   const today = new Date();
   const tomorrow = new Date(today);
@@ -25,15 +18,13 @@ const getTomorrowDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-// Reusable component for displaying matches for a specific league and predicting outcomes
 const LeagueScreen = ({leagueId}) => {
   const [loading, setLoading] = useState(true);
   const [matches, setMatches] = useState([]);
 
-  // Fetch all matches for tomorrow and filter by league ID
   const fetchMatches = async () => {
     const tomorrow = getTomorrowDate();
-    const API_URL = `https://v3.football.api-sports.io/fixtures?date=${tomorrow}`; // Fetch all fixtures for tomorrow
+    const API_URL = `https://v3.football.api-sports.io/fixtures?date=${tomorrow}`;
 
     try {
       const response = await axios.get(API_URL, {
@@ -41,8 +32,8 @@ const LeagueScreen = ({leagueId}) => {
           'x-apisports-key': API_KEY,
         },
       });
-      const allMatches = response.data.response; // Get all matches for tomorrow
-      // Filter matches by league ID
+      const allMatches = response.data.response;
+
       const leagueMatches = allMatches.filter(
         match => match.league.id === parseInt(leagueId),
       );
@@ -55,16 +46,14 @@ const LeagueScreen = ({leagueId}) => {
           return {...match, prediction};
         }),
       );
-      setMatches(matchesWithPredictions); // Set filtered matches
+      setMatches(matchesWithPredictions);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching match data:', error.message); // Log the error message
-      console.error(error.response ? error.response.data : error); // Log additional error details
+      console.error('Error fetching match data:', error.message);
       setLoading(false);
     }
   };
 
-  // Fetch team statistics and injuries, and predict match outcome
   const predictMatch = async (homeTeamId, awayTeamId) => {
     try {
       const homeStats = await fetchTeamStatistics(homeTeamId);
@@ -78,7 +67,6 @@ const LeagueScreen = ({leagueId}) => {
       console.log('Home Team Injuries:', homeInjuries);
       console.log('Away Team Injuries:', awayInjuries);
 
-      // If stats are null or not available, use default scores
       const homeScore = homeStats
         ? calculateTeamScore(homeStats, homeInjuries)
         : getDefaultScore();
@@ -89,12 +77,10 @@ const LeagueScreen = ({leagueId}) => {
       return `${homeScore} - ${awayScore}`;
     } catch (error) {
       console.error('Error predicting match outcome:', error);
-      // Fallback logic: If something goes wrong, predict a draw
       return '1 - 1';
     }
   };
 
-  // Fetch team statistics (form, goals scored, etc.)
   const fetchTeamStatistics = async teamId => {
     const API_URL = `https://v3.football.api-sports.io/teams/statistics?team=${teamId}&season=2024`;
     const response = await axios.get(API_URL, {
@@ -106,7 +92,6 @@ const LeagueScreen = ({leagueId}) => {
     return response.data.response; // Check if response is null or undefined
   };
 
-  // Fetch team injuries
   const fetchTeamInjuries = async teamId => {
     const API_URL = `https://v3.football.api-sports.io/injuries?team=${teamId}`;
     const response = await axios.get(API_URL, {
@@ -114,18 +99,15 @@ const LeagueScreen = ({leagueId}) => {
         'x-apisports-key': API_KEY,
       },
     });
-    console.log(`Team ${teamId} Injuries Response:`, response.data.response); // Log the full response
-    return response.data.response || []; // Return empty array if injuries are not available
+    console.log(`Team ${teamId} Injuries Response:`, response.data.response);
+    return response.data.response || [];
   };
 
-  // Default score if statistics are unavailable
   const getDefaultScore = () => {
-    return Math.floor(Math.random() * 3) + 1; // Return a random score between 1 and 3
+    return Math.floor(Math.random() * 3) + 1;
   };
 
-  // Calculate team score based on form and injuries
   const calculateTeamScore = (stats, injuries) => {
-    // Ensure form exists before attempting to split it
     const formRating =
       stats && stats.form
         ? stats.form.split('').reduce((acc, match) => {
@@ -137,10 +119,10 @@ const LeagueScreen = ({leagueId}) => {
             }
             return acc;
           }, 0)
-        : 5; // Default form rating of 5 if stats are unavailable
+        : 5;
 
-    const injuryImpact = injuries.length > 0 ? injuries.length * 0.1 : 0; // Reduce score slightly based on injuries
-    const score = Math.max(1, Math.round(formRating / 5 - injuryImpact)); // Ensure score is at least 1
+    const injuryImpact = injuries.length > 0 ? injuries.length * 0.1 : 0;
+    const score = Math.max(1, Math.round(formRating / 5 - injuryImpact));
     return score;
   };
 
@@ -167,7 +149,7 @@ const LeagueScreen = ({leagueId}) => {
                 {new Date(item.fixture.date).toLocaleString()}
               </Text>
               <Text style={styles.predictionText}>
-                Prediction: {item.prediction}
+                Prediction: To be determined
               </Text>
             </View>
           )}
@@ -177,7 +159,6 @@ const LeagueScreen = ({leagueId}) => {
   );
 };
 
-// Create a Tab Navigator
 const Tab = createMaterialTopTabNavigator();
 
 const PredictionsTabs = () => {
@@ -236,41 +217,5 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
-// Styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#2b2b2b',
-  },
-  noMatches: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 50,
-    color: '#ffbf00',
-  },
-  matchItem: {
-    backgroundColor: '#3b3b3b',
-    padding: 20,
-    marginVertical: 10,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: {width: 0, height: 3},
-    elevation: 5,
-  },
-  matchText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#ffffff',
-  },
-  predictionText: {
-    fontSize: 16,
-    marginTop: 5,
-    color: '#ffbf00',
-  },
-});
 
 export default App;
