@@ -199,12 +199,13 @@ const PredictionsTabs = () => {
       />
 
       <Tab.Screen
-        name="Turkish Super Lig"
-        component={() => <LeagueScreen leagueId="203" />}
-      />
-      <Tab.Screen
         name="Carabao Cup"
         component={() => <LeagueScreen leagueId="713" />}
+      />
+
+      <Tab.Screen
+        name="Turkish Super Lig"
+        component={() => <LeagueScreen leagueId="203" />}
       />
     </Tab.Navigator>
   );
