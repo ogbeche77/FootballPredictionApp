@@ -1,9 +1,9 @@
-import {API_FOOTBALL_KEY} from '@env';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {NavigationContainer} from '@react-navigation/native';
+import { API_FOOTBALL_KEY } from '@env';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import styles from './AppStyles';
 
 const API_KEY = API_FOOTBALL_KEY;
@@ -88,8 +88,8 @@ const LeagueScreen = ({leagueId}) => {
         'x-apisports-key': API_KEY,
       },
     });
-    console.log(`Team ${teamId} Stats Response:`, response.data.response); // Log the full response
-    return response.data.response; // Check if response is null or undefined
+    console.log(`Team ${teamId} Stats Response:`, response.data.response);
+    return response.data.response;
   };
 
   const fetchTeamInjuries = async teamId => {
