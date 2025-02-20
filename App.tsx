@@ -1,9 +1,9 @@
-import { API_FOOTBALL_KEY } from '@env';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import {API_FOOTBALL_KEY} from '@env';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, FlatList, Text, View} from 'react-native';
 import styles from './AppStyles';
 
 const API_KEY = API_FOOTBALL_KEY;
@@ -49,7 +49,7 @@ const LeagueScreen = ({leagueId}) => {
       setMatches(matchesWithPredictions);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching match data:', error.message);
+      console.error('Error when fetching match data:', error.message);
       setLoading(false);
     }
   };
